@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=220&section=header&text=Привет,%20я%20ВАШ_НИК!%20👋&fontSize=38&fontColor=ffffff&animation=fadeIn&fontAlignY=35" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=220&section=header&text=Привет,%20я%20%20&fontSize=38&fontColor=ffffff&animation=fadeIn&fontAlignY=35" width="100%"/>
 
 <img src="https://readme-typing-svg.demolab.com/?font=Fira+Code&weight=600&size=24&duration=3000&pause=800&color=C9A7FF&center=true&vCenter=true&width=520&lines=Game+Developer+%F0%9F%8E%AE;Unity+%2B+C%23;Люблю+аниме+и+атмосферные+хорроры;Добро+пожаловать+на+мою+страницу!" alt="Typing SVG"/>
 
