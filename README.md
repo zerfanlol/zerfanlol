@@ -1,33 +1,37 @@
-<div align="center">
+<!-- ================================================================
+     ШАБЛОН ПРОФИЛЯ GITHUB В АНИМЕ-СТИЛЕ (минимальная версия)
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=220&section=header&text=Привет,%20я%20%20&fontSize=38&fontColor=ffffff&animation=fadeIn&fontAlignY=35" width="100%"/>
-
-<img src="https://readme-typing-svg.demolab.com/?font=Fira+Code&weight=600&size=24&duration=3000&pause=800&color=C9A7FF&center=true&vCenter=true&width=520&lines=Game+Developer+%F0%9F%8E%AE;Unity+%2B+C%23;Люблю+аниме+и+атмосферные+хорроры;Добро+пожаловать+на+мою+страницу!" alt="Typing SVG"/>
-
-<!-- 🌸 ЗАМЕНИ ССЫЛКУ НИЖЕ НА СВОЁ АНИМЕ-ИЗОБРАЖЕНИЕ/GIF -->
-<img src="https://media1.tenor.com/m/a0z4XjmWxCAAAAAC/rose-red.gif" width="280" alt="anime banner"/> </div> <br/>
-</div>
-
-<br/>
-
-
-### 📊 Статистика
+     Как использовать:
+     1. Замени ссылку в первом <img> на свою аниме-гифку
+     2. Отредактируй раздел «Технологии» под себя
+     3. Замени ссылки в самом низу на свои Discord и Telegram
+     4. Сохрани как README.md в репозитории, названном как твой логин
+     ================================================================ -->
 
 <div align="center">
 
-<img height="165" src="https://github-readme-stats.vercel.app/api?username=ВАШ_НИК&show_icons=true&theme=tokyonight&hide_border=true"/>
-<img height="165" src="https://streak-stats.demolab.com?user=ВАШ_НИК&theme=tokyonight&hide_border=true"/>
-
-<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=ВАШ_НИК&layout=compact&theme=tokyonight&hide_border=true"/>
+<!-- 🌸 ЗАМЕНИ ССЫЛКУ НИЖЕ НА СВОЮ АНИМЕ-ГИФКУ -->
+<img src="https://media1.tenor.com/m/nsox_245RfAAAAAC/killua-hunterxhunter.gif" width="100%" alt="anime banner"/>
 
 </div>
 
 <br/>
 
-### 🏅 Трофеи
-
 <div align="center">
-<img src="https://github-profile-trophy.vercel.app/?username=ВАШ_НИК&theme=tokyonight&no-frame=true&row=1&column=6"/>
+
+![C#](https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=csharp&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
+![VS Code](https://img.shields.io/badge/VS%20Code-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white)
+
 </div>
 
-<br/>
+<br/><br/>
+
+<!-- 🌐 ЗАМЕНИ ССЫЛКИ НИЖЕ НА СВОИ DISCORD И TELEGRAM -->
+<div align="center">
+
+[![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/ZerF4n)
+[![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/users/1549422525744816273)
+
+</div>
