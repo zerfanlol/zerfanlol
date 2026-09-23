@@ -11,7 +11,7 @@
 <div align="center">
 
 <!-- 🌸 ЗАМЕНИ ССЫЛКУ НИЖЕ НА СВОЮ АНИМЕ-ГИФКУ -->
-<img src="[https://media1.tenor.com/m/nsox_245RfAAAAAC/killua-hunterxhunter.gif](https://media1.tenor.com/m/w2bmnuwHAJ4AAAAC/killua-hunter-x-hunter.gif)" width="100%" alt="anime banner"/>
+<img src="[https://media1.tenor.com/m/nsox_245RfAAAAAC/killua-hunterxhunter.gif](https://media1.tenor.com/m/w2bmnuwHAJ4AAAAC/killua-hunter-x-hunter.gif)" width="100%" alt=""/>
 
 </div>
 
