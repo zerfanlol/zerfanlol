@@ -5,7 +5,7 @@
 <img src="https://readme-typing-svg.demolab.com/?font=Fira+Code&weight=600&size=24&duration=3000&pause=800&color=C9A7FF&center=true&vCenter=true&width=520&lines=Game+Developer+%F0%9F%8E%AE;Unity+%2B+C%23;Люблю+аниме+и+атмосферные+хорроры;Добро+пожаловать+на+мою+страницу!" alt="Typing SVG"/>
 
 <!-- 🌸 ЗАМЕНИ ССЫЛКУ НИЖЕ НА СВОЁ АНИМЕ-ИЗОБРАЖЕНИЕ/GIF -->
-<div class="tenor-gif-embed" data-postid="14372759679213684260" data-share-method="host" data-aspect-ratio="1.77857" data-width="100%"><a href="https://tenor.com/view/chill-guy-100-vot-ona-gif-14372759679213684260">Chill Guy 100 GIF</a>from <a href="https://tenor.com/search/chill+guy-gifs">Chill Guy GIFs</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"> width="280" alt="anime banner"/>
+<div class="tenor-gif-embed" data-postid="7731827743865095200" data-share-method="host" data-aspect-ratio="1.76596" data-width="100%"><a href="https://tenor.com/view/rose-red-red-rose-background-anime-gif-7731827743865095200">Rose Red GIF</a>from <a href="https://tenor.com/search/rose-gifs">Rose GIFs</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script> async src="https://tenor.com/embed.js"> width="280" alt="anime banner"/>
 
 </div>
 
