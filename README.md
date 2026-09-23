@@ -11,7 +11,7 @@
 <div align="center">
 
 <!-- 🌸 ЗАМЕНИ ССЫЛКУ НИЖЕ НА СВОЮ АНИМЕ-ГИФКУ -->
-<img src="(87146-755552-animegif.gif)" width="100%" />
+<img src="https://raw.githubusercontent.com/zerfanol/zerfanol/main/87146-755552-animegif.gif" width="100%" alt=""/>
 
 </div>
 
