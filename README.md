@@ -11,7 +11,7 @@
 <div align="center">
 
 <!-- 🌸 ЗАМЕНИ ССЫЛКУ НИЖЕ НА СВОЮ АНИМЕ-ГИФКУ -->
-<img src="https://media1.tenor.com/m/nsox_245RfAAAAAC/killua-hunterxhunter.gif" width="100%" alt="anime banner"/>
+<img src="[https://media1.tenor.com/m/nsox_245RfAAAAAC/killua-hunterxhunter.gif](https://media1.tenor.com/m/w2bmnuwHAJ4AAAAC/killua-hunter-x-hunter.gif)" width="100%" alt="anime banner"/>
 
 </div>
 
@@ -25,9 +25,7 @@
 ![VS Code](https://img.shields.io/badge/VS%20Code-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white)
 
 </div>
-
 <br/><br/>
-
 <!-- 🌐 ЗАМЕНИ ССЫЛКИ НИЖЕ НА СВОИ DISCORD И TELEGRAM -->
 <div align="center">
 
