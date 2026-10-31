@@ -3,14 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Terminal OS</title>
+  <title>zerfa@wired:~#</title>
   <style>
     :root {
-      --bg: #0d0f12;
-      --fg: #8b949e;
-      --accent: #c9d1d9;
-      --dim: #484f58;
-      --prompt: #6e7681;
+      --bg: #090a0f;
+      --fg: #a9b7c6;
+      --accent: #00ff66;
+      --dim: #4e5d6c;
+      --prompt-user: #00e1ff;
+      --prompt-host: #ff0055;
     }
 
     * {
@@ -22,73 +23,82 @@
     body {
       background-color: var(--bg);
       color: var(--fg);
-      font-family: "Courier New", Courier, monospace;
-      font-size: 14px;
-      line-height: 1.4;
-      padding: 20px;
+      font-family: "Fira Code", "Courier New", Courier, monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      padding: 30px;
       height: 100vh;
       overflow-y: auto;
+      text-shadow: 0 0 2px rgba(169, 183, 198, 0.2);
     }
 
-    /* Эффект ЭЛТ-монитора / Старого экрана */
+    /* Кинескопный CRT-эффект (сканлайны и мерцание) */
     body::before {
       content: " ";
       display: block;
       position: fixed;
       top: 0; left: 0; bottom: 0; right: 0;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
-      background-size: 100% 4px;
-      z-index: 10;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.4) 50%), 
+                  radial-gradient(circle, rgba(0,0,0,0) 60%, rgba(0,0,0,0.6) 100%);
+      background-size: 100% 3px, 100% 100%;
+      z-index: 100;
       pointer-events: none;
-      opacity: 0.6;
     }
 
     #terminal {
-      max-width: 900px;
+      max-width: 950px;
       margin: 0 auto;
     }
 
     .output-line {
       white-space: pre-wrap;
       word-break: break-all;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
 
     .ascii-art {
-      color: var(--accent);
+      color: #00ffcc;
+      line-height: 1.2;
       font-weight: bold;
+      text-shadow: 0 0 5px rgba(0, 255, 204, 0.4);
     }
 
-    .info-key { color: var(--accent); font-weight: bold; }
+    .info-key { color: #ff007f; font-weight: bold; }
     .info-val { color: var(--fg); }
+    .highlight { color: #00ff66; font-weight: bold; }
+    .error { color: #ff3333; }
 
     .input-line {
       display: flex;
       align-items: center;
-      margin-top: 8px;
+      margin-top: 10px;
     }
 
     .prompt {
-      color: var(--prompt);
-      margin-right: 8px;
+      color: var(--prompt-user);
+      margin-right: 6px;
       user-select: none;
+      font-weight: bold;
+    }
+
+    .host {
+      color: var(--prompt-host);
     }
 
     input {
       background: transparent;
       border: none;
-      color: var(--accent);
+      color: #ffffff;
       font-family: inherit;
       font-size: inherit;
       flex: 1;
       outline: none;
+      text-shadow: 0 0 3px rgba(255,255,255,0.4);
     }
 
-    .colors-bar span {
-      display: inline-block;
-      width: 12px;
-      height: 12px;
-      margin-right: 4px;
+    /* Мобильный фикс */
+    @media (max-width: 600px) {
+      body { padding: 10px; font-size: 11px; }
     }
   </style>
 </head>
@@ -96,67 +106,89 @@
 
 <div id="terminal">
   <div id="history"></div>
-  <div class="input-line">
-    <span class="prompt">user@wired:~$</span>
-    <input type="text" id="cmdInput" autofocus spellcheck="false">
+  <div class="input-line" id="inputContainer">
+    <span class="prompt">zerfa<span class="host">@wired</span>:~$</span>
+    <input type="text" id="cmdInput" autofocus autocomplete="off" autocapitalize="off" spellcheck="false">
   </div>
 </div>
+
+<canvas id="matrixCanvas" style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:1; pointer-events:none; display:none;"></canvas>
 
 <script>
   const history = document.getElementById('history');
   const input = document.getElementById('cmdInput');
-
-  // ASCII Арт картинки для fastfetch (Lain / Monochome aesthetic)
-  const asciiPic = `
-       .---.      
-      /     \\     
-     | () () |    
-      \\  ^  /     
-       |||||      
-      /|   |\\     
-  `;
+  const terminal = document.getElementById('terminal');
+  let commandHistory = [];
+  let historyIndex = -1;
+  let matrixActive = false;
 
   const fastfetchOutput = `
-<span class="ascii-art">
-   .-------------.     <span class="info-key">user</span>@<span class="info-key">wired</span>
-  /  _____ _____  \\    ------------------
- |  /  _  \\  _  \\  |   <span class="info-key">OS:</span> Debian GNU/Linux 13 (trixie) x86_64
- | |  / \\  / \\  | |  <span class="info-key">Host:</span> Custom Hardware Workspace
- | | |   ||   | | |  <span class="info-key">Kernel:</span> 6.12.0-custom-x86_64
- |  \\ \\_// \\_//  / |   <span class="info-key">Uptime:</span> 48 hours, 12 mins
-  \\  \\___/ \\___/  /    <span class="info-key">Shell:</span> bash 5.2.21
-   '-------------'     <span class="info-key">WM:</span> XFCE / LXQt
-                       <span class="info-key">Terminal:</span> xterm-256color
-                       <span class="info-key">Memory:</span> 4096MiB / 16384MiB
+<span class="ascii-art">       .---.       </span>  <span class="info-key">zerfa</span>@<span class="info-key">wired</span>
+<span class="ascii-art">      /     \\      </span>  ------------------
+<span class="ascii-art">     | () () |     </span>  <span class="info-key">OS:</span> Debian GNU/Linux 13 (trixie) x86_64
+<span class="ascii-art">      \\  ^  /      </span>  <span class="info-key">Host:</span> Custom Multi-Monitor Rig + Server
+<span class="ascii-art">       |||||       </span>  <span class="info-key">Kernel:</span> 6.12.0-custom-x86_64
+<span class="ascii-art">      /|   |\\      </span>  <span class="info-key">Uptime:</span> 72 hours, 41 mins
+<span class="ascii-art">     \\ |___| /     </span>  <span class="info-key">Shell:</span> bash 5.2.21
+<span class="ascii-art">      '-----'      </span>  <span class="info-key">WM:</span> XFCE / LXQt / Arch (CLI)
+                     <span class="info-key">Terminal:</span> xterm-256color
+                     <span class="info-key">CPU:</span> AMD Ryzen / Custom Setup
+                     <span class="info-key">Memory:</span> 4096MiB / 16384MiB
+                     
+                     <span style="background:#000000">   </span><span style="background:#ff0055">   </span><span style="background:#00ff66">   </span><span style="background:#ffcc00">   </span><span style="background:#00e1ff">   </span><span style="background:#9900ff">   </span><span style="background:#00ffcc">   </span><span style="background:#ffffff">   </span>`;
 
-                       <span class="colors-bar">
-                         <span style="background:#1e1e1e"></span><span style="background:#484f58"></span><span style="background:#6e7681"></span><span style="background:#8b949e"></span>
-                         <span style="background:#c9d1d9"></span><span style="background:#f0f6fc"></span><span style="background:#79c0ff"></span><span style="background:#56d4dd"></span>
-                       </span>
-</span>`;
+  // Приветствие
+  printLine("Wired System OS v3.0 [Protected Kernel Mode]");
+  printLine("Type '<span class=\"highlight\">help</span>' to list available system directives.\n");
 
-  // Автостарт при открытии
-  printLine("Initializing Wired System v2.4...");
-  printLine("Type '<span class="info-key">help</span>' or '<span class="info-key">fastfetch</span>' to start.\n");
-
+  // Обработка ввода и истории команд (стрелочки вверх/вниз)
   input.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
-      const command = input.value.trim();
-      printLine(`<span class="prompt">user@wired:~$</span> ${escapeHtml(command)}`);
-      processCommand(command.toLowerCase());
+      const val = input.value.trim();
+      if (val !== '') {
+        commandHistory.push(val);
+        historyIndex = commandHistory.length;
+      }
+      printLine(`<span class="prompt">zerfa<span class="host">@wired</span>:~$</span> ${escapeHtml(val)}`);
+      processCommand(val.toLowerCase());
       input.value = '';
       window.scrollTo(0, document.body.scrollHeight);
+    } else if (e.key === 'ArrowUp') {
+      if (historyIndex > 0) {
+        historyIndex--;
+        input.value = commandHistory[historyIndex];
+      }
+      e.preventDefault();
+    } else if (e.key === 'ArrowDown') {
+      if (historyIndex < commandHistory.length - 1) {
+        historyIndex++;
+        input.value = commandHistory[historyIndex];
+      } else {
+        historyIndex = commandHistory.length;
+        input.value = '';
+      }
+      e.preventDefault();
     }
   });
 
+  // Клик в любое место возвращает фокус на инпут
+  document.addEventListener('click', () => {
+    if(!matrixActive) input.focus();
+  });
+
   function processCommand(cmd) {
-    switch(cmd) {
+    const parts = cmd.split(' ');
+    const mainCmd = parts[0];
+
+    switch(mainCmd) {
       case 'help':
-        printLine(`Доступные команды:
-  <span class="info-key">fastfetch</span>  - системная информация и арт
-  <span class="info-key">whoami</span>     - кто я такой
-  <span class="info-key">socials</span>    - ссылки и соцсети
-  <span class="info-key">clear</span>      - очистить консоль`);
+        printLine(`Доступные системные команды:
+  <span class="highlight">fastfetch</span> - вывод аппаратной спецификации и системного арта
+  <span class="highlight">whoami</span>    - статус пользователя и стек технологий
+  <span class="highlight">matrix</span>    - запуск/остановка цифрового потока (Matrix Rain)
+  <span class="highlight">socials</span>   - внешние сетевые узлы (GitHub, Telegram)
+  <span class="highlight">sudo</span>      - проверка привилегий доступа
+  <span class="highlight">clear</span>     - очистка буфера терминала`);
         break;
 
       case 'fastfetch':
@@ -164,22 +196,31 @@
         break;
 
       case 'whoami':
-        printLine("Студент / Системное администрирование & Python разработчик.");
+        printLine("zerfa — студент, специализирующийся на системном администрировании, Linux-окружениях (Debian/Arch) и разработке на Python.");
         break;
 
       case 'socials':
-        printLine("GitHub: https://github.com\nTelegram: @your_tag");
+        printLine("GitHub: <a href=\"https://github.com/zerfanlol\" target=\"_blank\" style=\"color:#00e1ff;\">github.com/zerfanlol</a>");
+        break;
+
+      case 'sudo':
+        printLine("<span class=\"error\">[ERROR] User 'zerfa' is not in the sudoers file. This incident will be reported.</span>");
+        break;
+
+      case 'matrix':
+        toggleMatrix();
         break;
 
       case 'clear':
         history.innerHTML = '';
+        if(matrixActive) toggleMatrix();
         break;
 
       case '':
         break;
 
       default:
-        printLine(`bash: command not found: ${escapeHtml(cmd)}. Type 'help' for options.`);
+        printLine(`<span class="error">bash: command not found: ${escapeHtml(mainCmd)}. Введите 'help' для справки.</span>`);
     }
   }
 
@@ -192,6 +233,46 @@
 
   function escapeHtml(text) {
     return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  // Пасхалка: Матричный дождь на фон
+  const canvas = document.getElementById('matrixCanvas');
+  const ctx = canvas.getContext('2d');
+  let matrixInterval = null;
+
+  function toggleMatrix() {
+    if (matrixActive) {
+      clearInterval(matrixInterval);
+      canvas.style.display = 'none';
+      matrixActive = false;
+      printLine("Matrix rain deactivated.");
+      input.focus();
+    } else {
+      canvas.style.display = 'block';
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const chars = "ｦｱｳｴｵｶｷｹｺｻｼｽｾｿﾀﾂﾃﾅﾆﾇﾈﾊﾋﾎﾏﾐﾑﾒﾓﾔﾕﾗﾘﾜ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      const fontSize = 14;
+      const columns = canvas.width / fontSize;
+      const drops = [];
+      for (let i = 0; i < columns; i++) drops[i] = 1;
+
+      matrixInterval = setInterval(() => {
+        ctx.fillStyle = "rgba(9, 10, 15, 0.08)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#00ff66";
+        ctx.font = fontSize + "px monospace";
+        for (let i = 0; i < drops.length; i++) {
+          const text = chars.charAt(Math.floor(Math.random() * chars.length));
+          ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+          if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+          drops[i]++;
+        }
+      }, 33);
+      matrixActive = true;
+      printLine("<span class=\"highlight\">Matrix rain protocol engaged. Наберите 'matrix' или 'clear' для выхода.</span>");
+      // Прячем инпут на время матричного дождя, чтобы не мешал
+    }
   }
 </script>
 
