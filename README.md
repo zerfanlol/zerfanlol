@@ -1,22 +1,3 @@
-<div align="center">
-
-```text
-┌────────────────────────────────────────────────────────────────────────┐
-│ user@wired:~$ fastfetch                                                │
-├────────────────────────────────────────────────────────────────────────┤
-│                                                                        │
-│     .-------------.     user@wired                                     │
-│    /  _____ _____  \    ------------------                             │
-│   |  /  _  \  _  \  |   OS: Debian GNU/Linux 13 (trixie) x86_64        │
-│   | |  / \  / \  | |   Host: Custom Hardware Workspace                 │
-│   | | |   ||   | | |   Kernel: 6.12.0-custom-x86_64                    │
-│   |  \ \_// \_//  / |   Uptime: 48 hours, 12 mins                      │
-│    \  \___/ \___/  /    Shell: bash 5.2.21                             │
-│     '-------------'     WM: XFCE / LXQt                                │
-│                         Terminal: xterm-256color                       │
-│                         Memory: 4096MiB / 16384MiB                     │
-│                                                                        │
-│                         [■][■][■][■][■][■][■][■]                       │
-│                                                                        │
-│ user@wired:~$ _                                                        │
-└────────────────────────────────────────────────────────────────────────┘
+<p align="center">
+  <img src="./github-metrics.svg" width="100%" alt="Terminal Metrics" />
+</p>
