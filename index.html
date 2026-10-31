@@ -1,17 +1,30 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>zerfa@wired:~#</title>
+  <title>Wired OS // Terminal Showcase</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600;700&display=swap');
+
     :root {
-      --bg: #090a0f;
-      --fg: #a9b7c6;
+      --bg-color: #05070a;
+      --panel-bg: rgba(9, 13, 20, 0.85);
+      --text-main: #94a3b8;
       --accent: #00ff66;
-      --dim: #4e5d6c;
-      --prompt-user: #00e1ff;
-      --prompt-host: #ff0055;
+      --accent-dim: rgba(0, 255, 102, 0.15);
+      --border-color: #1e293b;
+    }
+
+    body.theme-blue {
+      --accent: #00e1ff;
+      --accent-dim: rgba(0, 225, 255, 0.15);
+    }
+
+    body.theme-red {
+      --accent: #ff0055;
+      --accent-dim: rgba(255, 0, 85, 0.15);
     }
 
     * {
@@ -21,260 +34,431 @@
     }
 
     body {
-      background-color: var(--bg);
-      color: var(--fg);
-      font-family: "Fira Code", "Courier New", Courier, monospace;
-      font-size: 13px;
-      line-height: 1.5;
-      padding: 30px;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: 'Fira Code', monospace;
       height: 100vh;
-      overflow-y: auto;
-      text-shadow: 0 0 2px rgba(169, 183, 198, 0.2);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
     }
 
-    /* Кинескопный CRT-эффект (сканлайны и мерцание) */
+    /* CRT Scanlines and Vignette */
     body::before {
       content: " ";
       display: block;
       position: fixed;
       top: 0; left: 0; bottom: 0; right: 0;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.4) 50%), 
-                  radial-gradient(circle, rgba(0,0,0,0) 60%, rgba(0,0,0,0.6) 100%);
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%),
+                  radial-gradient(circle, rgba(0,0,0,0) 50%, rgba(0,0,0,0.85) 100%);
       background-size: 100% 3px, 100% 100%;
-      z-index: 100;
+      z-index: 999;
       pointer-events: none;
     }
 
-    #terminal {
-      max-width: 950px;
-      margin: 0 auto;
+    /* Subtle screen flicker */
+    @keyframes flicker {
+      0% { opacity: 0.97; }
+      50% { opacity: 1; }
+      100% { opacity: 0.98; }
+    }
+
+    .crt-window {
+      animation: flicker 0.15s infinite;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), 0 0 20px var(--accent-dim);
+      border: 1px solid var(--border-color);
+      background: var(--panel-bg);
+      backdrop-filter: blur(10px);
+      width: 100%;
+      max-width: 1100px;
+      height: 85vh;
+      display: flex;
+      flex-direction: column;
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Terminal Header */
+    .terminal-header {
+      background: rgba(13, 17, 23, 0.95);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.75rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+
+    .window-dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #ff5f56; }
+    .dot-yellow { background: #ffbd2e; }
+    .dot-green { background: #27c93f; }
+
+    /* Terminal Body */
+    .terminal-body {
+      flex: 1;
+      padding: 1.5rem;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .terminal-body::-webkit-scrollbar {
+      width: 6px;
+    }
+    .terminal-body::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 3px;
     }
 
     .output-line {
       white-space: pre-wrap;
       word-break: break-all;
-      margin-bottom: 6px;
+      margin-bottom: 0.5rem;
     }
 
     .ascii-art {
-      color: #00ffcc;
-      line-height: 1.2;
+      color: var(--accent);
       font-weight: bold;
-      text-shadow: 0 0 5px rgba(0, 255, 204, 0.4);
+      text-shadow: 0 0 8px var(--accent-dim);
+      line-height: 1.2;
     }
 
-    .info-key { color: #ff007f; font-weight: bold; }
-    .info-val { color: var(--fg); }
-    .highlight { color: #00ff66; font-weight: bold; }
-    .error { color: #ff3333; }
+    .prompt-label {
+      color: var(--accent);
+      font-weight: 600;
+    }
 
-    .input-line {
+    .input-row {
       display: flex;
       align-items: center;
-      margin-top: 10px;
+      margin-top: 0.75rem;
     }
 
-    .prompt {
-      color: var(--prompt-user);
-      margin-right: 6px;
-      user-select: none;
-      font-weight: bold;
-    }
-
-    .host {
-      color: var(--prompt-host);
-    }
-
-    input {
+    .cmd-input {
       background: transparent;
       border: none;
-      color: #ffffff;
+      color: #fff;
       font-family: inherit;
       font-size: inherit;
       flex: 1;
       outline: none;
-      text-shadow: 0 0 3px rgba(255,255,255,0.4);
+      margin-left: 0.5rem;
+      caret-color: var(--accent);
     }
 
-    /* Мобильный фикс */
-    @media (max-width: 600px) {
-      body { padding: 10px; font-size: 11px; }
+    /* Matrix canvas background */
+    #matrixCanvas {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0.15;
+    }
+
+    /* Quick command chips */
+    .chip {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .chip:hover {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: #fff;
     }
   </style>
 </head>
-<body>
+<body class="theme-green">
 
-<div id="terminal">
-  <div id="history"></div>
-  <div class="input-line" id="inputContainer">
-    <span class="prompt">zerfa<span class="host">@wired</span>:~$</span>
-    <input type="text" id="cmdInput" autofocus autocomplete="off" autocapitalize="off" spellcheck="false">
+  <!-- Matrix Canvas Background -->
+  <canvas id="matrixCanvas"></canvas>
+
+  <div class="crt-window">
+    <!-- Window Header -->
+    <div class="terminal-header">
+      <div class="window-dots">
+        <div class="dot dot-red" title="Close"></div>
+        <div class="dot dot-yellow" title="Minimize"></div>
+        <div class="dot dot-green" title="Maximize"></div>
+      </div>
+      <div class="text-xs tracking-wider opacity-70 font-semibold">
+        WIRED-OS // v3.4.2 [SECURE SHELL]
+      </div>
+      <div class="flex gap-2">
+        <button onclick="setTheme('green')" class="chip" style="color: #00ff66;">[G]</button>
+        <button onclick="setTheme('blue')" class="chip" style="color: #00e1ff;">[B]</button>
+        <button onclick="setTheme('red')" class="chip" style="color: #ff0055;">[R]</button>
+      </div>
+    </div>
+
+    <!-- Terminal Output & Input Area -->
+    <div class="terminal-body" id="terminalBody" onclick="focusInput()">
+      <div id="history"></div>
+      <div class="input-row">
+        <span class="prompt-label">zerfa@wired:~$</span>
+        <input type="text" id="cmdInput" class="cmd-input" autofocus autocomplete="off" spellcheck="false">
+      </div>
+    </div>
+
+    <!-- Footer Quick Links -->
+    <div class="px-4 py-2 bg-black/40 border-t border-slate-800 flex flex-wrap gap-2 items-center text-xs justify-between">
+      <div class="flex gap-2 flex-wrap">
+        <span class="opacity-60">Quick:</span>
+        <button onclick="executeDirectCommand('fastfetch')" class="chip">fastfetch</button>
+        <button onclick="executeDirectCommand('whoami')" class="chip">whoami</button>
+        <button onclick="executeDirectCommand('projects')" class="chip">projects</button>
+        <button onclick="executeDirectCommand('skills')" class="chip">skills</button>
+        <button onclick="executeDirectCommand('matrix')" class="chip">matrix</button>
+        <button onclick="executeDirectCommand('clear')" class="chip">clear</button>
+      </div>
+      <div class="opacity-50 text-[10px]">
+        Press TAB or Up/Down for history
+      </div>
+    </div>
   </div>
-</div>
 
-<canvas id="matrixCanvas" style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:1; pointer-events:none; display:none;"></canvas>
+  <script>
+    const historyEl = document.getElementById('history');
+    const inputEl = document.getElementById('cmdInput');
+    const terminalBody = document.getElementById('terminalBody');
+    let cmdHistory = [];
+    let historyIdx = -1;
+    let matrixActive = false;
+    let matrixInterval = null;
 
-<script>
-  const history = document.getElementById('history');
-  const input = document.getElementById('cmdInput');
-  const terminal = document.getElementById('terminal');
-  let commandHistory = [];
-  let historyIndex = -1;
-  let matrixActive = false;
+    // Web Audio API subtle keystroke click generator
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playBeep() {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = 800 + Math.random() * 200;
+      gain.gain.setValueAtTime(0.015, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.04);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.04);
+    }
 
-  const fastfetchOutput = `
-<span class="ascii-art">       .---.       </span>  <span class="info-key">zerfa</span>@<span class="info-key">wired</span>
-<span class="ascii-art">      /     \\      </span>  ------------------
-<span class="ascii-art">     | () () |     </span>  <span class="info-key">OS:</span> Debian GNU/Linux 13 (trixie) x86_64
-<span class="ascii-art">      \\  ^  /      </span>  <span class="info-key">Host:</span> Custom Multi-Monitor Rig + Server
-<span class="ascii-art">       |||||       </span>  <span class="info-key">Kernel:</span> 6.12.0-custom-x86_64
-<span class="ascii-art">      /|   |\\      </span>  <span class="info-key">Uptime:</span> 72 hours, 41 mins
-<span class="ascii-art">     \\ |___| /     </span>  <span class="info-key">Shell:</span> bash 5.2.21
-<span class="ascii-art">      '-----'      </span>  <span class="info-key">WM:</span> XFCE / LXQt / Arch (CLI)
-                     <span class="info-key">Terminal:</span> xterm-256color
-                     <span class="info-key">CPU:</span> AMD Ryzen / Custom Setup
-                     <span class="info-key">Memory:</span> 4096MiB / 16384MiB
-                     
-                     <span style="background:#000000">   </span><span style="background:#ff0055">   </span><span style="background:#00ff66">   </span><span style="background:#ffcc00">   </span><span style="background:#00e1ff">   </span><span style="background:#9900ff">   </span><span style="background:#00ffcc">   </span><span style="background:#ffffff">   </span>`;
+    const fastfetchArt = `
+       .---.     
+      /     \\    
+     | () () |   
+      \\  ^  /    
+       |||||     
+      /|   |\\    
+     \\ |___| /   
+      '-----'    `;
 
-  // Приветствие
-  printLine("Wired System OS v3.0 [Protected Kernel Mode]");
-  printLine("Type '<span class=\"highlight\">help</span>' to list available system directives.\n");
+    const fastfetchText = `
+<span class="ascii-art">${fastfetchArt}</span>  <span style="color:var(--accent); font-weight:bold;">zerfa</span>@<span style="color:#fff;">wired</span>
+                     ------------------
+                     <span style="color:var(--accent);">OS:</span> Debian GNU/Linux 13 (trixie) x86_64
+                     <span style="color:var(--accent);">Host:</span> Custom Cyber Rig (X86_64)
+                     <span style="color:var(--accent);">Kernel:</span> 6.12.0-custom-wired
+                     <span style="color:var(--accent);">Uptime:</span> 1337 hours, 42 mins
+                     <span style="color:var(--accent);">Shell:</span> bash 5.2.21
+                     <span style="color:var(--accent);">WM:</span> XFCE / Custom CLI
+                     <span style="color:var(--accent);">Terminal:</span> xterm-256color
+                     <span style="color:var(--accent);">Memory:</span> 4096MiB / 16384MiB`;
 
-  // Обработка ввода и истории команд (стрелочки вверх/вниз)
-  input.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      const val = input.value.trim();
-      if (val !== '') {
-        commandHistory.push(val);
-        historyIndex = commandHistory.length;
-      }
-      printLine(`<span class="prompt">zerfa<span class="host">@wired</span>:~$</span> ${escapeHtml(val)}`);
-      processCommand(val.toLowerCase());
-      input.value = '';
-      window.scrollTo(0, document.body.scrollHeight);
-    } else if (e.key === 'ArrowUp') {
-      if (historyIndex > 0) {
-        historyIndex--;
-        input.value = commandHistory[historyIndex];
-      }
-      e.preventDefault();
-    } else if (e.key === 'ArrowDown') {
-      if (historyIndex < commandHistory.length - 1) {
-        historyIndex++;
-        input.value = commandHistory[historyIndex];
+    function printOutput(html, isCommand = false) {
+      const div = document.createElement('div');
+      div.className = 'output-line';
+      if (isCommand) {
+        div.innerHTML = `<span class="prompt-label">zerfa@wired:~$</span> ${escapeHtml(html)}`;
       } else {
-        historyIndex = commandHistory.length;
-        input.value = '';
+        div.innerHTML = html;
       }
-      e.preventDefault();
+      historyEl.appendChild(div);
+      terminalBody.scrollTop = terminalBody.scrollHeight;
     }
-  });
 
-  // Клик в любое место возвращает фокус на инпут
-  document.addEventListener('click', () => {
-    if(!matrixActive) input.focus();
-  });
-
-  function processCommand(cmd) {
-    const parts = cmd.split(' ');
-    const mainCmd = parts[0];
-
-    switch(mainCmd) {
-      case 'help':
-        printLine(`Доступные системные команды:
-  <span class="highlight">fastfetch</span> - вывод аппаратной спецификации и системного арта
-  <span class="highlight">whoami</span>    - статус пользователя и стек технологий
-  <span class="highlight">matrix</span>    - запуск/остановка цифрового потока (Matrix Rain)
-  <span class="highlight">socials</span>   - внешние сетевые узлы (GitHub, Telegram)
-  <span class="highlight">sudo</span>      - проверка привилегий доступа
-  <span class="highlight">clear</span>     - очистка буфера терминала`);
-        break;
-
-      case 'fastfetch':
-        printLine(fastfetchOutput);
-        break;
-
-      case 'whoami':
-        printLine("zerfa — студент, специализирующийся на системном администрировании, Linux-окружениях (Debian/Arch) и разработке на Python.");
-        break;
-
-      case 'socials':
-        printLine("GitHub: <a href=\"https://github.com/zerfanlol\" target=\"_blank\" style=\"color:#00e1ff;\">github.com/zerfanlol</a>");
-        break;
-
-      case 'sudo':
-        printLine("<span class=\"error\">[ERROR] User 'zerfa' is not in the sudoers file. This incident will be reported.</span>");
-        break;
-
-      case 'matrix':
-        toggleMatrix();
-        break;
-
-      case 'clear':
-        history.innerHTML = '';
-        if(matrixActive) toggleMatrix();
-        break;
-
-      case '':
-        break;
-
-      default:
-        printLine(`<span class="error">bash: command not found: ${escapeHtml(mainCmd)}. Введите 'help' для справки.</span>`);
+    function escapeHtml(text) {
+      return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
-  }
 
-  function printLine(text) {
-    const div = document.createElement('div');
-    div.className = 'output-line';
-    div.innerHTML = text;
-    history.appendChild(div);
-  }
+    // Boot sequence
+    printOutput("Initializing Wired Protocol v3.4...");
+    printOutput("Establishing secure connection to the Layer...");
+    printOutput("Type '<span style='color:var(--accent); font-weight:bold;'>help</span>' to view system directives.\n");
 
-  function escapeHtml(text) {
-    return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  }
+    inputEl.addEventListener('keydown', (e) => {
+      playBeep();
+      if (e.key === 'Enter') {
+        const val = inputEl.value.trim();
+        if (val !== "") {
+          cmdHistory.push(val);
+          historyIdx = cmdHistory.length;
+          printOutput(val, true);
+          processCommand(val.toLowerCase());
+        }
+        inputEl.value = '';
+      } else if (e.key === 'ArrowUp') {
+        if (historyIdx > 0) {
+          historyIdx--;
+          inputEl.value = cmdHistory[historyIdx];
+        }
+        e.preventDefault();
+      } else if (e.key === 'ArrowDown') {
+        if (historyIdx < cmdHistory.length - 1) {
+          historyIdx++;
+          inputEl.value = cmdHistory[historyIdx];
+        } else {
+          historyIdx = cmdHistory.length;
+          inputEl.value = '';
+        }
+        e.preventDefault();
+      }
+    });
 
-  // Пасхалка: Матричный дождь на фон
-  const canvas = document.getElementById('matrixCanvas');
-  const ctx = canvas.getContext('2d');
-  let matrixInterval = null;
+    function executeDirectCommand(cmd) {
+      playBeep();
+      printOutput(cmd, true);
+      processCommand(cmd);
+      inputEl.focus();
+    }
 
-  function toggleMatrix() {
-    if (matrixActive) {
-      clearInterval(matrixInterval);
-      canvas.style.display = 'none';
-      matrixActive = false;
-      printLine("Matrix rain deactivated.");
-      input.focus();
-    } else {
-      canvas.style.display = 'block';
+    function focusInput() {
+      inputEl.focus();
+    }
+
+    function processCommand(cmd) {
+      const parts = cmd.split(' ');
+      const main = parts[0];
+
+      switch(main) {
+        case 'help':
+          printOutput(`Available directives:
+  <span style="color:var(--accent)">fastfetch</span> - system hardware specs & cyber ascii art
+  <span style="color:var(--accent)">whoami</span>    - operator profile & philosophy
+  <span style="color:var(--accent)">projects</span>  - featured repositories & tools
+  <span style="color:var(--accent)">skills</span>    - technical stack & competencies
+  <span style="color:var(--accent)">matrix</span>    - toggle digital rain simulation
+  <span style="color:var(--accent)">socials</span>   - external network nodes (GitHub, Telegram)
+  <span style="color:var(--accent)">clear</span>     - clear terminal buffer`);
+          break;
+
+        case 'fastfetch':
+          printOutput(fastfetchText);
+          break;
+
+        case 'whoami':
+          printOutput(`zerfa // Systems Administrator & Python Developer.
+Deeply passionate about Linux environments, low-level networking, retro computing aesthetics, and cyberpunk culture.`);
+          break;
+
+        case 'projects':
+          printOutput(`Featured Repositories:
+  1. <a href="https://github.com/zerfanlol" target="_blank" style="color:var(--accent); text-decoration:underline;">Wired-Terminal-OS</a> — Advanced interactive web terminal showcase.
+  2. <a href="https://github.com/zerfanlol" target="_blank" style="color:var(--accent); text-decoration:underline;">System-Monitor-CLI</a> — Lightweight hardware monitoring suite in Python.
+  3. <a href="https://github.com/zerfanlol" target="_blank" style="color:var(--accent); text-decoration:underline;">Monochrome-Dotfiles</a> — Custom window manager & shell configs.`);
+          break;
+
+        case 'skills':
+          printOutput(`Technical Stack:
+  • Languages: Python, Bash, JavaScript, C++
+  • Systems: Debian, Arch Linux, Git, Docker, Nginx
+  • Architecture: CLI Utilities, Web Widgets, Automation Scripts`);
+          break;
+
+        case 'socials':
+          printOutput(`Network Links:
+  • GitHub: <a href="https://github.com/zerfanlol" target="_blank" style="color:var(--accent);">github.com/zerfanlol</a>
+  • Telegram: @zerfanlol`);
+          break;
+
+        case 'matrix':
+          toggleMatrix();
+          break;
+
+        case 'clear':
+          historyEl.innerHTML = '';
+          break;
+
+        case '':
+          break;
+
+        default:
+          printOutput(`<span style="color:#ff5f56;">bash: command not found: ${escapeHtml(main)}. Type 'help' for instructions.</span>`);
+      }
+    }
+
+    function setTheme(theme) {
+      document.body.className = `theme-${theme}`;
+      printOutput(`System theme switched to '${theme}'.`);
+    }
+
+    // Matrix background initialization
+    const canvas = document.getElementById('matrixCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function initMatrix() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
       const chars = "ｦｱｳｴｵｶｷｹｺｻｼｽｾｿﾀﾂﾃﾅﾆﾇﾈﾊﾋﾎﾏﾐﾑﾒﾓﾔﾕﾗﾘﾜ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
       const fontSize = 14;
-      const columns = canvas.width / fontSize;
-      const drops = [];
-      for (let i = 0; i < columns; i++) drops[i] = 1;
+      const columns = Math.floor(canvas.width / fontSize);
+      const drops = Array(columns).fill(1);
 
       matrixInterval = setInterval(() => {
-        ctx.fillStyle = "rgba(9, 10, 15, 0.08)";
+        ctx.fillStyle = "rgba(5, 7, 10, 0.08)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "#00ff66";
+        ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--accent');
         ctx.font = fontSize + "px monospace";
+
         for (let i = 0; i < drops.length; i++) {
           const text = chars.charAt(Math.floor(Math.random() * chars.length));
           ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-          if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+          if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0;
+          }
           drops[i]++;
         }
-      }, 33);
+      }, 40);
       matrixActive = true;
-      printLine("<span class=\"highlight\">Matrix rain protocol engaged. Наберите 'matrix' или 'clear' для выхода.</span>");
-      // Прячем инпут на время матричного дождя, чтобы не мешал
     }
-  }
-</script>
 
+    function toggleMatrix() {
+      if (matrixActive) {
+        clearInterval(matrixInterval);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        matrixActive = false;
+        printOutput("Matrix digital rain deactivated.");
+      } else {
+        initMatrix();
+        printOutput("Matrix digital rain engaged.");
+      }
+    }
+
+    window.addEventListener('resize', () => {
+      if(matrixActive) {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+    });
+  </script>
 </body>
 </html>
