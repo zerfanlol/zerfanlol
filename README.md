@@ -1,5 +1,22 @@
-<p align="center">
-  <a href="[https://zerfanlol.github.io/](https://zerfanlol.github.io/zerfanlol/)">
-    <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&color=8B949E&background=0D111700&center=true&vCenter=true&width=500&height=100&lines=user%40wired%3A~%24+fastfetch;Loading+Debian+GNU%2FLinux+13...;Access+Granted.+Click+to+open+interactive+shell...;" alt="Terminal Typing" />
-  </a>
-</p>
+<div align="center">
+
+```text
+┌────────────────────────────────────────────────────────────────────────┐
+│ user@wired:~$ fastfetch                                                │
+├────────────────────────────────────────────────────────────────────────┤
+│                                                                        │
+│     .-------------.     user@wired                                     │
+│    /  _____ _____  \    ------------------                             │
+│   |  /  _  \  _  \  |   OS: Debian GNU/Linux 13 (trixie) x86_64        │
+│   | |  / \  / \  | |   Host: Custom Hardware Workspace                 │
+│   | | |   ||   | | |   Kernel: 6.12.0-custom-x86_64                    │
+│   |  \ \_// \_//  / |   Uptime: 48 hours, 12 mins                      │
+│    \  \___/ \___/  /    Shell: bash 5.2.21                             │
+│     '-------------'     WM: XFCE / LXQt                                │
+│                         Terminal: xterm-256color                       │
+│                         Memory: 4096MiB / 16384MiB                     │
+│                                                                        │
+│                         [■][■][■][■][■][■][■][■]                       │
+│                                                                        │
+│ user@wired:~$ _                                                        │
+└────────────────────────────────────────────────────────────────────────┘
