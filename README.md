@@ -1,3 +1,20 @@
-<p align="center">
-  <img src="./github-metrics.svg" width="600" style="background-color: #0d1117; filter: hue-rotate(110deg) brightness(0.85) contrast(1.2);" alt="Terminal Metrics" />
-</p>
+<div align="center">
+
+<img src="./87146-755552-animegif.gif" width="100%" alt=""/>
+
+</div>
+
+<br/>
+
+<div align="center">
+
+![C#](https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=sharp&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
+![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+
+[![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/ZerF4n)
+[![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/users/1549422525744816273)
+
+</div>
