@@ -19,10 +19,17 @@ jobs:
           plugin_languages_limit: 5
           config_timezone: Europe/Moscow
           extras_css: |
-            /* Меняем фон на глубокий темный цвет и настраиваем монохром */
-            :root {
-              --color-background: #0d1117;
-              --color-terminal-bg: #090a0f;
-              --color-terminal-border: #30363d;
+            /* Полностью убираем фиолетовый фон Ubuntu */
+            .terminal, div.terminal, table.terminal, svg {
+              background: #090a0f !important;
+              background-color: #090a0f !important;
             }
-            svg { background-color: #0d1117 !important; border-radius: 6px; }
+            /* Фон всей карточки под цвет тёмной темы GitHub */
+            :root {
+              --color-background: #0d1117 !important;
+              --color-terminal-bg: #090a0f !important;
+              --color-terminal-header: #161b22 !important;
+              --color-terminal-border: #30363d !important;
+            }
+            /* Убираем дисклеймер сверху */
+            .disclaimer { display: none !important; }
